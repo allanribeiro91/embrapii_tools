@@ -26,5 +26,5 @@ def atualizar_google_sheet():
         atualizar_gsheet(url, aba, caminho_arquivo)
     print("Dados atualizados com sucesso!")
 
-
-atualizar_google_sheet()
+if __name__ == "__main__":
+    atualizar_google_sheet()
