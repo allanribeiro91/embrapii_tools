@@ -45,8 +45,9 @@ def gerar_projetos_bmaisp(recorte):
         ~projetos_filtro['status'].isin(['Cancelado', 'Suspenso'])
     ]
 
-    # transforma todos os status para "Em andamento"
-    projetos_filtro['status'] = 'Em andamento'
+    # transforma todos os status que estão "Atrasado" ou "Suspenso" para "Em andamento"
+    projetos_filtro.loc[projetos_filtro['status'].isin(['Atrasado', 'Suspenso']), 'status'] = 'Em andamento'
+
 
     # projetos_filtro = projetos_filtro[[
     #     "codigo_projeto", "unidade_embrapii", "data_contrato", "data_inicio", "data_termino",

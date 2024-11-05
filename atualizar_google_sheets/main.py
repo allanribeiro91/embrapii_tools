@@ -12,16 +12,26 @@ INFORMACOES_EMPRESAS = os.path.abspath(os.path.join(ROOT, 'inputs', 'informacoes
 INFO_UNIDADES_EMBRAPII = os.path.abspath(os.path.join(ROOT, 'inputs', 'info_unidades_embrapii.xlsx'))
 UE_LINHAS_ATUACAO = os.path.abspath(os.path.join(ROOT, 'inputs', 'ue_linhas_atuacao.xlsx'))
 MACROENTREGAS = os.path.abspath(os.path.join(ROOT, 'inputs', 'macroentregas.xlsx'))
+NEGOCIACOES = os.path.abspath(os.path.join(ROOT, 'inputs', 'negociacoes_negociacoes.xlsx'))
+CLASSIFICACAO_PROJETO = os.path.abspath(os.path.join(ROOT, 'inputs', 'classificacao_projeto.xlsx'))
+PROJETOS = os.path.abspath(os.path.join(ROOT, 'inputs', 'projetos.xlsx'))
+PROSPECCOES = os.path.abspath(os.path.join(ROOT, 'inputs', 'prospeccao_prospeccao.xlsx'))
+CNAE_IBGE = os.path.abspath(os.path.join(ROOT, 'inputs', 'cnae_ibge.xlsx'))
 
 def atualizar_google_sheet():
     puxar_planilhas()
     url = "https://docs.google.com/spreadsheets/d/1x7IUvZnXg2MH2k3QE9Kiq-_Db4eA-2xwFGuswbTDYjg/edit?usp=sharing"
-    abas = {'raw_portfolio':PORTFOLIO, 
+    abas = {'raw_portfolio': PORTFOLIO, 
             'raw_projetos_empresas': PROJETOS_EMPRESAS,
             'raw_informacoes_empresas': INFORMACOES_EMPRESAS,
             'raw_info_unidades_embrapii': INFO_UNIDADES_EMBRAPII,
             'raw_ue_linhas_atuacao': UE_LINHAS_ATUACAO,
-            'raw_macroentregas': MACROENTREGAS}
+            'raw_macroentregas': MACROENTREGAS,
+            'raw_negociacoes_negociacoes': NEGOCIACOES,
+            'raw_classificacao_projetos': CLASSIFICACAO_PROJETO,
+            'raw_projetos': PROJETOS,
+            'raw_prospeccao_prospeccao': PROSPECCOES,
+            'raw_cnae_ibge': CNAE_IBGE}
     for aba, caminho_arquivo in abas.items():
         atualizar_gsheet(url, aba, caminho_arquivo)
     print("Dados atualizados com sucesso!")

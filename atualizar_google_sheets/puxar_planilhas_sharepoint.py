@@ -22,7 +22,12 @@ def puxar_planilhas():
     get_file('info_unidades_embrapii.xlsx', 'DWPII/srinfo', inputs)
     get_file('ue_linhas_atuacao.xlsx', 'DWPII/srinfo', inputs)
     get_file('macroentregas.xlsx', 'DWPII/srinfo', inputs)
-    print('Download concluído')
+    get_file('negociacoes_negociacoes.xlsx', 'DWPII/srinfo', inputs)
+    get_file('classificacao_projeto.xlsx', 'DWPII/srinfo', inputs)
+    get_file('projetos.xlsx', 'DWPII/srinfo', inputs)
+    get_file('prospeccao_prospeccao.xlsx', 'DWPII/srinfo', inputs)
+    get_file('cnae_ibge.xlsx', 'DWPII/lookup_tables', inputs)
+    print('Downloads concluídos.')
 
 def apagar_arquivos_pasta(caminho_pasta):
     try:
