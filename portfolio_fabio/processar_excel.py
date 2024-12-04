@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-def processar_excel(arquivo_origem, campos_interesse, novos_nomes_e_ordem, arquivo_destino, campos_data=None, campos_valor=None, campos_string=None):
+def processar_excel(arquivo_origem, campos_interesse, novos_nomes_e_ordem, arquivo_destino, campos_data=None, campos_valor=None, campos_string=None, ordenar=None, campo_ordenar=None, crescente=None):
     # Ler o arquivo Excel
     df = pd.read_excel(arquivo_origem)
 
@@ -22,6 +22,11 @@ def processar_excel(arquivo_origem, campos_interesse, novos_nomes_e_ordem, arqui
         for campo in campos_string:
             if campo in df_renomeado.columns:
                 df_renomeado[campo] = df_renomeado[campo].astype(str)
+
+    # Ordenar os dados
+    if ordenar:
+        if campo_ordenar in df_renomeado.columns:
+            df_renomeado = df_renomeado.sort_values(by = campo_ordenar, ascending = crescente)
 
     # Reordenar as colunas conforme especificado
     df_final = df_renomeado[list(novos_nomes_e_ordem.values())]

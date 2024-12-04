@@ -112,6 +112,7 @@ def combinar_dados(merged2):
     'valor_sebrae': 'first',
     'valor_unidade_embrapii': 'first',
     'pedidos_pi': 'first',
+    'data_extracao_dados': 'first'
     }).reset_index()
 
     # Adicione uma coluna para a contagem de repetições
@@ -124,6 +125,9 @@ def combinar_dados(merged2):
     combinado['data_termino'] = pd.to_datetime(combinado['data_termino'], format = '%d/%m/%Y', errors = 'coerce')
     combinado['duracao_meses'] = ((combinado['data_termino'].dt.year - combinado['data_contrato'].dt.year) * 12 +
                                   (combinado['data_termino'].dt.month - combinado['data_contrato'].dt.month))
+    
+    # renomeando 'Encerrado' para 'Concluído'
+    combinado['status'] = combinado['status'].apply(lambda x: 'Concluído' if x == 'Encerrado' else x)
         
     # mesclando com a contagem de linhas
     combinado['pedidos_pi'] = combinado['pedidos_pi'].fillna(0)
@@ -146,32 +150,42 @@ def combinar_dados(merged2):
             previous_month = date - pd.DateOffset(months=1)
             return previous_month.strftime('%Y%m')
 
+    # pegando mês anterior de contratação para cálculo do valor atualizado pelo IPCA
     combinado['mes_anterior'] = combinado['data_contrato'].apply(get_previous_month)
     ultimo_mes = ipca['Mês (Código)'].iloc[-1]
     ultimo_valor = ipca['Valor'].iloc[-1]
 
+    # juntando os valores IPCA do mês anterior com a planilha dos projetos
     combinado = pd.merge(combinado, ipca[['Mês (Código)', 'Valor']], left_on = 'mes_anterior', right_on = 'Mês (Código)', how = 'left')
     combinado['Valor'] = combinado['Valor'].fillna(ultimo_valor)
 
+    # calculando os valores atualizados
     combinado['valor_total_ipca'] = round((ultimo_valor/combinado['Valor'])*combinado['valor_total'],2)
     combinado['valor_embrapii_ipca'] = round((ultimo_valor/combinado['Valor'])*combinado['valor_embrapii'],2)
     combinado['valor_empresa_ipca'] = round((ultimo_valor/combinado['Valor'])*combinado['valor_empresa'],2)
     combinado['valor_sebrae_ipca'] = round((ultimo_valor/combinado['Valor'])*combinado['valor_sebrae'],2)
     combinado['valor_unidade_ipca'] = round((ultimo_valor/combinado['Valor'])*combinado['valor_unidade_embrapii'],2)
 
+    # ordenando das mais novas para as mais antigas
+    combinado = combinado.sort_values(by='data_contrato', ascending=False)
+
+    # salvando o dataframe em excel
     combinado.to_excel(os.path.abspath(os.path.join(INPUTS, 'planilha_combinada.xlsx')), index = False)
 
-    return ultimo_mes
+    # pegando a data de extração dos dados
+    extracao = min(combinado['data_extracao_dados']).strftime(format='%Y%m%d')
+
+    # retornando a data do valor de referência utilizado para o cálculo do IPCA e a data de extração dos dados
+    return ultimo_mes, extracao
 
 
 
-def processar_dados(ultimo_mes):
+def processar_dados(ultimo_mes, extracao):
     # Definições dos caminhos e nomes de arquivos
-    today = datetime.now().strftime(format='%Y%m%d')
     origem = os.path.join(ROOT, 'inputs')
     nome_arquivo = "planilha_combinada.xlsx"
     arquivo_origem = os.path.join(origem, nome_arquivo)
-    arquivo_destino = os.path.join(origem, f'portfolio_atualizado_{today}.xlsx')
+    arquivo_destino = os.path.join(origem, f'portfolio_atualizado_{extracao}.xlsx')
 
     # Campos de interesse e novos nomes das colunas
     campos_interesse = [
@@ -290,10 +304,10 @@ def processar_dados(ultimo_mes):
                     f'Valor total IPCA {ultimo_mes}', f'Valor Embrapii IPCA {ultimo_mes}', f'Valor Empresa IPCA {ultimo_mes}', f'Valor Sebrae IPCA {ultimo_mes}',
                     f'Valor Unidade IPCA {ultimo_mes}']
 
-    processar_excel(arquivo_origem, campos_interesse, novos_nomes_e_ordem, arquivo_destino, campos_data, campos_valor)
+    processar_excel(arquivo_origem, campos_interesse, novos_nomes_e_ordem, arquivo_destino, campos_data, campos_valor, ordenar=True, campo_ordenar='data_contrato', crescente=False)
 
 
-def empresas(emp):
+def empresas(emp, extracao):
     proj_emp = pd.read_excel(os.path.abspath(os.path.join(INPUTS, 'projetos_empresas.xlsx')))
 
     # concatenando os valores de empresas, para ter somente uma linha para cada cnpj
@@ -312,11 +326,10 @@ def empresas(emp):
     empresas.to_excel('portfolio_fabio/inputs/empresas.xlsx')
 
     # Definições dos caminhos e nomes de arquivos
-    today = datetime.now().strftime(format='%Y%m%d')
     origem = os.path.join(ROOT, 'inputs')
     nome_arquivo = "empresas.xlsx"
     arquivo_origem = os.path.join(origem, nome_arquivo)
-    arquivo_destino = os.path.join(origem, f'informacoes_empresas_{today}.xlsx')
+    arquivo_destino = os.path.join(origem, f'informacoes_empresas_{extracao}.xlsx')
 
     # Campos de interesse e novos nomes das colunas
     campos_interesse = [
@@ -360,14 +373,13 @@ def empresas(emp):
     processar_excel(arquivo_origem, campos_interesse, novos_nomes_e_ordem, arquivo_destino)
 
 
-def gerar_planilha_unica():
-    today = datetime.now().strftime(format='%Y%m%d')
+def gerar_planilha_unica(extracao):
 
     # lendo os arquivos
-    portfolio = pd.read_excel(os.path.abspath(os.path.join(INPUTS, f'portfolio_atualizado_{today}.xlsx')))
-    empresas = pd.read_excel(os.path.abspath(os.path.join(INPUTS, f'informacoes_empresas_{today}.xlsx')))
+    portfolio = pd.read_excel(os.path.abspath(os.path.join(INPUTS, f'portfolio_atualizado_{extracao}.xlsx')))
+    empresas = pd.read_excel(os.path.abspath(os.path.join(INPUTS, f'informacoes_empresas_{extracao}.xlsx')))
 
     # juntando na mesma planilha
-    with pd.ExcelWriter(f'portfolio_fabio/up/Portfolio Trabalho {today}.xlsx') as writer:
+    with pd.ExcelWriter(f'portfolio_fabio/up/Portfolio Trabalho {extracao}.xlsx') as writer:
         portfolio.to_excel(writer, sheet_name='Portfolio Trabalho', index=False)
         empresas.to_excel(writer, sheet_name='Informações Empresas', index=False)
