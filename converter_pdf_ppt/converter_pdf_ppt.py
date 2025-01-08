@@ -53,7 +53,8 @@ def pdf_to_ppt_image(pdf_file_path, output_ppt_path, dpi=600):
         os.rmdir(temp_folder)
 
 # Uso da função
-pdf_file_path = r"C:\Users\allan.ribeiro\Documents\funcoes_python\converter_pdf_ppt\embrapii_visão_geral.pdf"
+# pdf_file_path = r"C:\Users\allan.ribeiro\Documents\funcoes_python\converter_pdf_ppt\embrapii_visão_geral.pdf"
+pdf_file_path = "arquivo.pdf"
 output_ppt_path = "resultado2.pptx"  # Caminho do arquivo PPT de saída
 pdf_to_ppt_image(pdf_file_path, output_ppt_path)
 
