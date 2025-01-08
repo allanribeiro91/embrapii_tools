@@ -3,20 +3,26 @@ import sys
 import shutil
 import pandas as pd
 from dotenv import load_dotenv
+from office365_api.download_files import get_file
+from office365_api.upload_files import upload_files
 
 # carregar .env e tudo mais
 load_dotenv()
 ROOT = os.getenv('ROOT')
 
 # Adiciona o diretório correto ao sys.path
-PATH_OFFICE = os.path.abspath(os.path.join(ROOT, 'office365_api'))
-sys.path.append(PATH_OFFICE)
+# PATH_OFFICE = os.path.abspath(os.path.join(ROOT, 'office365_api'))
+# sys.path.append(PATH_OFFICE)
 
+#Definição dos caminhos do SHAREPOINT
+SHAREPOINT_SITE = os.getenv('sharepoint_url_site')
+SHAREPOINT_SITE_NAME = os.getenv('sharepoint_site_name')
+SHAREPOINT_DOC = os.getenv('sharepoint_doc_library')
+
+#Definição das pastas locais
 STEP1 = os.path.join(ROOT, "step_1_data_raw")
 STEP2 = os.path.join(ROOT, "step_2_stage_area")
 STEP3 = os.path.join(ROOT, "step_3_data_processed")
-
-from office365_api.download_files import get_file
 
 def puxar_planilhas():    
     apagar_arquivos_pasta(STEP1)
@@ -229,12 +235,6 @@ def gerar_responsaveis_embrapii(eventos, interacoes, nome_arquivo_saida):
         print(f"Erro ao processar os arquivos: {e}")
 
 
-
-
-
-def enviar_para_sharepoint(arquivo):
-    pass
-
 def main():
 
     #1 Baixar a planilha de registros
@@ -269,6 +269,9 @@ def main():
     eventos = os.path.join(ROOT, "step_3_data_processed", "eventos.xlsx")
     interacoes = os.path.join(ROOT, "step_3_data_processed", "interacoes.xlsx")
     gerar_responsaveis_embrapii(eventos, interacoes, 'responsaveis_embrapii')
+
+    #4. Levar arquivos para o Sharepoint
+    upload_files(STEP3, "DWPII/gerem", SHAREPOINT_SITE, SHAREPOINT_SITE_NAME, SHAREPOINT_DOC)
 
     
 if __name__ == "__main__":
