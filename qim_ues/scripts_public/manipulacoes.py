@@ -45,7 +45,14 @@ def pa_qim():
         'data_extracao': pd.to_datetime(today, format='%d/%m/%Y', errors='coerce')
         })
     
-    qim = comparar_excel("qim.xlsx", qim, manter_duplicados=True, pa = pa)[['id_pa', 'nota_qim', 'data_inicio_ref', 'data_termino_ref','data_extracao']]
+    qim_historico = comparar_excel("qim.xlsx", qim, manter_duplicados=True, pa = pa)[['id_pa', 'unidade_embrapii', 'pa_vigente', 'nota_qim',
+                                                                                      'data_inicio_ref', 'data_termino_ref', 'data_extracao']]
+    
+    qim_atual = qim_historico.sort_values(['unidade_embrapii', 'data_extracao']).drop_duplicates(subset=['unidade_embrapii'], keep='last')[['id_pa', 'unidade_embrapii',
+                                                                                                                                            'pa_vigente', 'nota_qim',
+                                                                                                                                            'data_inicio_ref', 'data_termino_ref',
+                                                                                                                                            'data_extracao']]
+
 
     with pd.ExcelWriter(os.path.join(UP, 'pa.xlsx'), engine="xlsxwriter") as writer:
         pa.to_excel(writer, index=False, sheet_name="Sheet1")
@@ -59,7 +66,7 @@ def pa_qim():
         worksheet.set_column("D:D", None, date_format)
 
     with pd.ExcelWriter(os.path.join(UP, 'qim.xlsx'), engine="xlsxwriter") as writer:
-        qim.to_excel(writer, index=False, sheet_name="Sheet1")
+        qim_historico.to_excel(writer, index=False, sheet_name="Sheet1")
         workbook = writer.book
         worksheet = writer.sheets["Sheet1"]
 
@@ -67,7 +74,18 @@ def pa_qim():
         date_format = workbook.add_format({'num_format': 'dd/mm/yyyy'})
         
         # Aplicando o formato para a coluna de datas
-        worksheet.set_column("C:E", None, date_format)
+        worksheet.set_column("E:G", None, date_format)
+
+    with pd.ExcelWriter(os.path.join(UP, 'qim_atual.xlsx'), engine="xlsxwriter") as writer:
+        qim_atual.to_excel(writer, index=False, sheet_name="Sheet1")
+        workbook = writer.book
+        worksheet = writer.sheets["Sheet1"]
+
+        # Formato de data
+        date_format = workbook.add_format({'num_format': 'dd/mm/yyyy'})
+        
+        # Aplicando o formato para a coluna de datas
+        worksheet.set_column("E:G", None, date_format)
 
     return pa, today
 
@@ -113,8 +131,8 @@ def resultados(pa, today):
         'data_extracao': pd.to_datetime(today, format='%d/%m/%Y', errors='coerce')
     })
 
-    resultados = comparar_excel("resultados.xlsx", resultados, manter_duplicados=True, pa = pa)[['id_pa', 'num_meta', 'titulo_meta', 'peso', 'pct_resultado',
-                                                                                                 'data_inicio_ref', 'data_termino_ref', 'data_extracao']]
+    resultados = comparar_excel("resultados.xlsx", resultados, manter_duplicados=True, pa = pa)[['id_pa', 'unidade_embrapii', 'pa_vigente', 'num_meta', 'titulo_meta',
+                                                                                                 'peso', 'pct_resultado', 'data_inicio_ref', 'data_termino_ref', 'data_extracao']]
 
     with pd.ExcelWriter(os.path.join(UP, 'resultados.xlsx'), engine="xlsxwriter") as writer:
         resultados.to_excel(writer, index=False, sheet_name="Sheet1")
@@ -125,7 +143,7 @@ def resultados(pa, today):
         date_format = workbook.add_format({'num_format': 'dd/mm/yyyy'})
         
         # Aplicando o formato para a coluna de datas
-        worksheet.set_column("F:H", None, date_format)
+        worksheet.set_column("H:J", None, date_format)
 
     # resultados.to_excel('up/resultados.xlsx', date_format='%d/%m/%Y', index=False)
 
