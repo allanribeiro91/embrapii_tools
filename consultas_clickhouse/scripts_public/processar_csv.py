@@ -17,7 +17,7 @@ def processar_csv(arquivo_origem, campos_interesse, novos_nomes_e_ordem, arquivo
     if campos_data:
         for campo in campos_data:
             if campo in df_renomeado.columns:
-                df_renomeado[campo] = pd.to_datetime(df_renomeado[campo], format='%d/%m/%Y', errors='coerce')
+                df_renomeado[campo] = pd.to_datetime(df_renomeado[campo], format='%Y-%m-%d', errors='coerce')
 
     if mes_ano:
         for campo in mes_ano:
