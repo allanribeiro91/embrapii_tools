@@ -70,7 +70,6 @@ def gerar_planilhas_equipes(por_unidade = False, por_projeto = False, por_mes = 
                 df2 = df
 
 
-
         # Contar CPFs distintos por unidade e mês
         if por_unidade:
                 unidade_mes = df2.groupby(["U.name", "mes", "ano", "mes_ano"]).agg(
@@ -139,6 +138,25 @@ def gerar_planilhas_equipes(por_unidade = False, por_projeto = False, por_mes = 
                 # Salvar em Excel
                 os.makedirs(destino, exist_ok=True)
                 mes.to_excel(os.path.join(destino, 'anexo8_cpfs_mes.xlsx'), index = False)
+
+        df3 = df2.rename(columns={"U.name": "unidade_embrapii",
+                                  "code" : "codigo_projeto",
+                                  "P.status" : "status_projeto",
+                                  "Periodo" : "periodo",
+                                  "SitParecer" : "situacao_parecer",
+                                  "total_hours" : "horas_trabalho",
+                                  "value" : "valor",
+                                  "availability" : "disponibilidade",
+                                  "start_date" : "data_inicio",
+                                  "end_date" : "data_termino"})
+        
+        df3 = df3[['cpf', 'unidade_embrapii', 'codigo_projeto', 'mes_ano', 'mes', 'ano', 'status_projeto',
+                   'periodo', 'situacao_parecer', 'horas_trabalho', 'valor', 'disponibilidade', 'data_inicio',
+                   'data_termino']]
+        
+        # Salvar em csv
+        os.makedirs(destino, exist_ok=True)
+        df3.to_csv(os.path.join(destino, 'anexo8_completo.csv'), index = False)
 
 
 
