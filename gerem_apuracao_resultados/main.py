@@ -36,7 +36,6 @@ def puxar_planilhas():
 
     get_file('apuracao_resultados_2024.xlsx', 'DWPII/gerem', STEP1)
     get_file('gerem_apuracao_validacao.xlsx', 'DWPII/gerem', STEP1)
-    get_file('gerem_validacao_negociacao.xlsx', 'DWPII/gerem', STEP1)
     get_file('prospeccao_prospeccao.xlsx', 'DWPII/srinfo', STEP1)
     get_file('negociacoes_empresas.xlsx', 'DWPII/srinfo', STEP1)
     get_file('portfolio.xlsx', 'DWPII/srinfo', STEP1)
@@ -548,7 +547,6 @@ def output_prospeccao():
 
     except Exception as e:
         print(f"Erro ao processar os dados: {e}")
-
 
 def match_negociacao_prospeccao():
     try:

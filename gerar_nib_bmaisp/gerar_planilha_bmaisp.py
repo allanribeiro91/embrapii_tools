@@ -3,6 +3,7 @@ import sys
 from dotenv import load_dotenv
 import pandas as pd
 from datetime import datetime
+import inspect
 
 # carregar .env 
 load_dotenv()
@@ -110,6 +111,7 @@ def gerar_empresas_bmaisp(projetos_empresas_filtro):
     return empresas_filtro
     
 def gerar_planilha_bmaisp():
+    print("🟡 " + inspect.currentframe().f_code.co_name)
     # define recorte e chama funções
     recorte = definir_recorte()
     projetos_filtro = gerar_projetos_bmaisp(recorte)
@@ -125,4 +127,4 @@ def gerar_planilha_bmaisp():
         empresas_filtro.to_excel(writer, sheet_name='dados_empresas', index=False)
 
     # reporta sucesso
-    print(f'Planilha filtrada do B+P gerada com sucesso.')
+    print("🟢 " + inspect.currentframe().f_code.co_name)

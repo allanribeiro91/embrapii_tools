@@ -1,10 +1,12 @@
 import gspread
 import pandas as pd
 from google.oauth2.service_account import Credentials
+import inspect
 
 def atualizar_gsheet(spreadsheet_url, spreadsheet_aba, excel_file):
+    print("🟡 " + inspect.currentframe().f_code.co_name)
     # 1. Defina o caminho para o arquivo de credenciais
-    SERVICE_ACCOUNT_FILE = "atualizar-gsheet-bc8515f31ad3.json"  # Substitua pelo caminho correto do arquivo JSON gerado
+    SERVICE_ACCOUNT_FILE = "api_google_sheets.json"
 
     # 2. Defina o escopo de permissões
     SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
@@ -29,5 +31,6 @@ def atualizar_gsheet(spreadsheet_url, spreadsheet_aba, excel_file):
 
     # 8. Atualize com os novos dados do DataFrame
     worksheet.update([df.columns.values.tolist()] + df.values.tolist())
+    print("🟢 " + inspect.currentframe().f_code.co_name)
 
     

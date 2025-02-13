@@ -3,6 +3,7 @@ import sys
 from dotenv import load_dotenv
 import pandas as pd
 from datetime import datetime
+import inspect
 
 # carregar .env 
 load_dotenv()
@@ -81,6 +82,7 @@ def gerar_empresas_nib(projetos_empresas_filtro):
     
 
 def gerar_planilha_nib():
+    print("🟡 " + inspect.currentframe().f_code.co_name)
     # define recorte e chama funções
     recorte = definir_recorte()
     projetos_filtro = gerar_projetos_nib(recorte)
@@ -96,4 +98,4 @@ def gerar_planilha_nib():
         empresas_filtro.to_excel(writer, sheet_name='dados_empresas', index=False)
 
     # reporta sucesso
-    print(f'Planilha do NIB gerada com sucesso.')
+    print("🟢 " + inspect.currentframe().f_code.co_name)
