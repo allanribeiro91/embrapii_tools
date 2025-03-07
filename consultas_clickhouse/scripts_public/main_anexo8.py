@@ -4,6 +4,7 @@ import sys
 import pandas as pd
 from datetime import datetime
 from scripts_public.consulta_clickhouse import consulta_clickhouse
+import inspect
 
 load_dotenv()
 
@@ -35,6 +36,19 @@ nome_arquivo = 'anexo8'
 
 def gerar_planilhas_equipes(por_unidade = False, por_projeto = False, por_mes = False, mes_especifico = None,
                             ano_especifico = None, tirar_desqualificados = False):
+    """
+    Função que gera planilhas com informações sobre as equipes
+    a partir do arquivo CSV gerado pela consulta ao ClickHouse (anexo8.csv)
+        por_unidade: bool - Gerar planilha por unidade
+        por_projeto: bool - Gerar planilha por projeto
+        por_mes: bool - Gerar planilha por mês
+        mes_especifico: list - Lista com meses específicos (se houver
+        ano_especifico: list - Lista com anos específicos (se houver)
+        tirar_desqualificados: bool - Retirar projetos desqualificados (default: False)
+    """
+    print("🟡 " + inspect.currentframe().f_code.co_name)
+
+    try:
         
         print("Gerando planilha de equipes")
         
@@ -158,75 +172,97 @@ def gerar_planilhas_equipes(por_unidade = False, por_projeto = False, por_mes = 
         os.makedirs(destino, exist_ok=True)
         df3.to_csv(os.path.join(destino, 'anexo8_completo.csv'), index = False)
 
+        print("🟢 " + inspect.currentframe().f_code.co_name)
+    except Exception as e:
+        print(f"🔴 Erro: {e}")
+
 
 
 
 def main_anexo8(por_unidade = False, por_projeto = False, por_mes = False,
                 mes_especifico = None, ano_especifico = None, tirar_desqualificados = False):
-    # Consulta ao ClickHouse
-    query = """
-            SELECT  U.name
-            ,P.code
-            ,P.status
-            ,CASE   WHEN    YEAR(cast(PFR.period_start as datetime)) = YEAR(cast(PFR.period_end as datetime))
-                    THEN     (CASE  WHEN cast(MONTH(cast(PFR.period_start as datetime)) as Int8) = 1 AND cast(MONTH(cast(PFR.period_end as datetime)) as Int8) = 6
-                                    THEN concat('1/',   cast(YEAR(cast(PFR.period_start as datetime)) as String))
-                                    WHEN cast(MONTH(cast(PFR.period_start as datetime)) as Int8) = 7 AND cast(MONTH(cast(PFR.period_end as datetime)) as Int8) = 12
-                                    THEN concat('2/',   cast(YEAR(cast(PFR.period_start as datetime)) as String))
-                                    WHEN cast(MONTH(cast(PFR.period_start as datetime)) as Int8) = 1 AND cast(MONTH(cast(PFR.period_end as datetime)) as Int8) = 12
-                                    THEN cast(YEAR(cast(PFR.period_start as datetime)) as String)
-                                    ELSE concat(arrayElement(['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'], MONTH(cast(PFR.period_start as datetime))),'/', cast(YEAR(cast(PFR.period_start as datetime)) as String),' - ', arrayElement(['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'], MONTH(cast(PFR.period_end as datetime))),'/', cast(YEAR(cast(PFR.period_end as datetime)) as String))
-                                    END
-                            )
-                    WHEN    YEAR(cast(PFR.period_end as datetime)) > YEAR(cast(PFR.period_start as datetime))
-                    THEN    concat((CASE    WHEN cast(MONTH(cast(PFR.period_start as datetime)) as Int8) = 1
-                                            THEN '1/'
-                                            WHEN cast(MONTH(cast(PFR.period_start as datetime)) as Int8) = 7
-                                            THEN '2/'
-                                            ELSE ''
-                                            END
-                                    )
-                                    ,cast(YEAR(cast(PFR.period_start as datetime)) as String)
-                                    ,' - '
-                                    ,(CASE  WHEN cast(MONTH(cast(PFR.period_end as datetime)) as Int8) = 6
-                                            THEN '1/'
-                                            WHEN cast(MONTH(cast(PFR.period_end as datetime)) as Int8) = 12
-                                            THEN '2/'
-                                            ELSE ''
-                                            END
-                                    )
-                                    ,cast(YEAR(cast(PFR.period_end as datetime)) as String)
-                                    )
-                    ELSE 'Erro'
-            END                                                 Periodo
-            ,CASE WHEN RE.status = '1' THEN 'Aberto' WHEN RE.status = '2' THEN 'Em Análise' WHEN RE.status = '3' THEN 'Fechado' END SitParecer
-            ,TM.month_year
-            ,TM.total_hours
-            ,TM.value
-            ,R.availability
-            ,R.start_date
-            ,R.end_date
-            ,PE.cpf
-            ,PE.name
-    FROM    db_bronze_srinfo.ue_unit                     U
-    JOIN    db_bronze_srinfo.project_project_ue                PU ON U.id          = PU.unit_id
-    JOIN    db_bronze_srinfo.project_project               P  ON P.id          = PU.project_id
-    JOIN    db_bronze_srinfo.projectfinance_financialreport       PFR    ON P.id          = PFR.project_related_id
-    JOIN    db_bronze_srinfo.projectfinance_report              RE  ON  PFR.report_id   = RE.id
-    JOIN    db_bronze_srinfo.projectfinance_timesheet        TM  ON  PFR.id          = TM.financial_report_id
-    JOIN    db_bronze_srinfo.projectfinance_memberallocation   M  ON M.id          = TM.memberallocation_related_id
-    JOIN    db_bronze_srinfo.people_role                  R  ON M.role_id      = R.id
-    JOIN    db_bronze_srinfo.people_person                PE ON R.person_id        = PE.id
-    WHERE   U.data_inativacao IS NULL
-    AND     PU.data_inativacao IS NULL
-    AND     P.data_inativacao IS NULL
-    AND     PFR.data_inativacao IS NULL
-    AND     RE.data_inativacao IS NULL
-    AND     TM.data_inativacao IS NULL
-    AND     M.data_inativacao IS NULL
-    AND     R.data_inativacao IS NULL
-    AND     PE.data_inativacao IS NULL
     """
+    Função para consultar ao ClickHouse e gerar planilhas com informações sobre as equipes
+    a partir do anexo8
+        por_unidade: bool - Gerar planilha por unidades
+        por_projeto: bool - Gerar planilha por projeto
+        por_mes: bool - Gerar planilha por mês
+        mes_especifico: list - Lista com meses específicos (se houver)
+        ano_especifico: list - Lista com anos específicos (se houver)
+        tirar_desqualificados: bool - Retirar projetos desqualificados (default: False)
+    """
+    print("🟡 " + inspect.currentframe().f_code.co_name)
+    try:
+           
+        # Consulta ao ClickHouse
+        query = """
+                SELECT  U.name
+                ,P.code
+                ,P.status
+                ,CASE   WHEN    YEAR(cast(PFR.period_start as datetime)) = YEAR(cast(PFR.period_end as datetime))
+                        THEN     (CASE  WHEN cast(MONTH(cast(PFR.period_start as datetime)) as Int8) = 1 AND cast(MONTH(cast(PFR.period_end as datetime)) as Int8) = 6
+                                        THEN concat('1/',   cast(YEAR(cast(PFR.period_start as datetime)) as String))
+                                        WHEN cast(MONTH(cast(PFR.period_start as datetime)) as Int8) = 7 AND cast(MONTH(cast(PFR.period_end as datetime)) as Int8) = 12
+                                        THEN concat('2/',   cast(YEAR(cast(PFR.period_start as datetime)) as String))
+                                        WHEN cast(MONTH(cast(PFR.period_start as datetime)) as Int8) = 1 AND cast(MONTH(cast(PFR.period_end as datetime)) as Int8) = 12
+                                        THEN cast(YEAR(cast(PFR.period_start as datetime)) as String)
+                                        ELSE concat(arrayElement(['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'], MONTH(cast(PFR.period_start as datetime))),'/', cast(YEAR(cast(PFR.period_start as datetime)) as String),' - ', arrayElement(['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'], MONTH(cast(PFR.period_end as datetime))),'/', cast(YEAR(cast(PFR.period_end as datetime)) as String))
+                                        END
+                                )
+                        WHEN    YEAR(cast(PFR.period_end as datetime)) > YEAR(cast(PFR.period_start as datetime))
+                        THEN    concat((CASE    WHEN cast(MONTH(cast(PFR.period_start as datetime)) as Int8) = 1
+                                                THEN '1/'
+                                                WHEN cast(MONTH(cast(PFR.period_start as datetime)) as Int8) = 7
+                                                THEN '2/'
+                                                ELSE ''
+                                                END
+                                        )
+                                        ,cast(YEAR(cast(PFR.period_start as datetime)) as String)
+                                        ,' - '
+                                        ,(CASE  WHEN cast(MONTH(cast(PFR.period_end as datetime)) as Int8) = 6
+                                                THEN '1/'
+                                                WHEN cast(MONTH(cast(PFR.period_end as datetime)) as Int8) = 12
+                                                THEN '2/'
+                                                ELSE ''
+                                                END
+                                        )
+                                        ,cast(YEAR(cast(PFR.period_end as datetime)) as String)
+                                        )
+                        ELSE 'Erro'
+                END                                                 Periodo
+                ,CASE WHEN RE.status = '1' THEN 'Aberto' WHEN RE.status = '2' THEN 'Em Análise' WHEN RE.status = '3' THEN 'Fechado' END SitParecer
+                ,TM.month_year
+                ,TM.total_hours
+                ,TM.value
+                ,R.availability
+                ,R.start_date
+                ,R.end_date
+                ,PE.cpf
+                ,PE.name
+        FROM    db_bronze_srinfo.ue_unit                     U
+        JOIN    db_bronze_srinfo.project_project_ue                PU ON U.id          = PU.unit_id
+        JOIN    db_bronze_srinfo.project_project               P  ON P.id          = PU.project_id
+        JOIN    db_bronze_srinfo.projectfinance_financialreport       PFR    ON P.id          = PFR.project_related_id
+        JOIN    db_bronze_srinfo.projectfinance_report              RE  ON  PFR.report_id   = RE.id
+        JOIN    db_bronze_srinfo.projectfinance_timesheet        TM  ON  PFR.id          = TM.financial_report_id
+        JOIN    db_bronze_srinfo.projectfinance_memberallocation   M  ON M.id          = TM.memberallocation_related_id
+        JOIN    db_bronze_srinfo.people_role                  R  ON M.role_id      = R.id
+        JOIN    db_bronze_srinfo.people_person                PE ON R.person_id        = PE.id
+        WHERE   U.data_inativacao IS NULL
+        AND     PU.data_inativacao IS NULL
+        AND     P.data_inativacao IS NULL
+        AND     PFR.data_inativacao IS NULL
+        AND     RE.data_inativacao IS NULL
+        AND     TM.data_inativacao IS NULL
+        AND     M.data_inativacao IS NULL
+        AND     R.data_inativacao IS NULL
+        AND     PE.data_inativacao IS NULL
+        """
 
-    consulta_clickhouse(HOST, PORT, USER, PASSWORD, query, pasta, nome_arquivo)
-    gerar_planilhas_equipes(por_unidade, por_projeto, por_mes, mes_especifico, ano_especifico, tirar_desqualificados)
+        consulta_clickhouse(HOST, PORT, USER, PASSWORD, query, pasta, nome_arquivo)
+        gerar_planilhas_equipes(por_unidade, por_projeto, por_mes, mes_especifico,
+                                ano_especifico, tirar_desqualificados)
+        
+        print("🟢 " + inspect.currentframe().f_code.co_name)
+    except Exception as e:
+        print(f"🔴 Erro: {e}")
