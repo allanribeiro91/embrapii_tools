@@ -7,6 +7,7 @@ from scripts_public.main_anexo8 import main_anexo8
 from scripts_public.main_repasses import main_repasses
 from scripts_public.main_plano_financeiro import main_plano_financeiro
 from scripts_public.levar_arquivos_sharepoint import levar_arquivos_sharepoint
+from scripts_public.consulta_clickhouse import conectar_vpn
 import inspect
 
 load_dotenv()
@@ -35,6 +36,7 @@ def main(anexo8 = False, registros_financeiros = False, repasses = False, plano 
     """
     print("🟡 " + inspect.currentframe().f_code.co_name)
     try:
+        conectar_vpn()
     
         if anexo8 or registros_financeiros or repasses:
             print("Apagando arquivos das pastas.")

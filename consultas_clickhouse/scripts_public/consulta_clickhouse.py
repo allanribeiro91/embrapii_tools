@@ -4,11 +4,45 @@ import os
 import sys
 from dotenv import load_dotenv
 import inspect
+import pyautogui
+import subprocess
+import time
 
 load_dotenv()
 
 ROOT = os.getenv('ROOT')
+USUARIO = os.getenv('usuario_vpn')
+SENHA = os.getenv('senha_vpn')
+FORTICLIENT_PATH = os.getenv('forticlient_path')
 sys.path.append(ROOT)
+
+
+def conectar_vpn():
+    # Passo 1: Abrir o FortiClient
+    # Ajuste o caminho conforme a instalação no seu PC
+    subprocess.Popen(FORTICLIENT_PATH)
+    print("Abrindo FortiClient...")
+    time.sleep(10)  # Aguarde o programa abrir (ajuste o tempo se necessário)
+
+    # Passo 2: Preencher credenciais
+    username = USUARIO
+    password = SENHA
+
+    # Passo 3: Escolher a VPN
+    pyautogui.click(x=714, y=416) # Clicar no campo de escolha do nome da VPN
+    pyautogui.click(x=685, y=479) # Escolher a segunda VPN da lista - SSL
+
+    # Passo 4: Inserir credenciais e conectar
+    pyautogui.press('tab') # Vai para o campo de usuário
+    pyautogui.write(username)
+    pyautogui.press('tab')  # Vai para o campo de senha
+    pyautogui.write(password)
+    pyautogui.press('enter')  # Conectar
+
+    time.sleep(10)  # Aguarde a conexão ser estabelecida
+
+    print("Tentando conectar à VPN...")
+
 
 def is_vpn_connected(host, port):
     """
