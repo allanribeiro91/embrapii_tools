@@ -93,7 +93,6 @@ def comparar_status(df_hoje, df_anterior, nome_status, status_desejado, colunas_
         print(f"🔴 Erro: {e}")
 
 
-
 def nova_data_macroentrega(df_macro, data_termino, data_aceitacao):
     """
     Função para verificar a data de término real ou aceitação da macroentrega.
@@ -183,7 +182,6 @@ def verificar_status_macroentrega(df_macro, df_portfolio):
         print(f"🔴 Erro: {e}")
 
 
-
 def definir_modalidade(modalidade_financiamento):
     """
     Função para padronizar as categorias de modalidade de financiamento.
@@ -227,7 +225,6 @@ def definir_modalidade(modalidade_financiamento):
         print(f"🔴 Erro: {e}")
         
 
-
 def dados_projetos():
     """
     Função para obter os dados necessários dos projetos para o envio da mensagem ao Teams.
@@ -266,7 +263,6 @@ def dados_projetos():
         print(f"🔴 Erro: {e}")
 
 
-
 def dados_macroentregas():
     """
     Função para obter os dados necessários das macroentregas para o envio da mensagem ao Teams.
@@ -274,8 +270,16 @@ def dados_macroentregas():
     print("🟡 " + inspect.currentframe().f_code.co_name)
     try:
 
+        # Carregar as planilhas
+        projetos_atual = pd.read_excel(os.path.join(PLANILHAS, "portfolio.xlsx"))  # Planilha de projetos (atual)
+        projetos_anterior = pd.read_excel(os.path.join(ANTERIOR, "portfolio.xlsx"))  # Planilha de projetos (anterior)
         macroentregas_atual = pd.read_excel(os.path.join(PLANILHAS, "macroentregas.xlsx"))  # Planilha de macroentregas (atual)
         macroentregas_anterior = pd.read_excel(os.path.join(PLANILHAS, "macroentregas.xlsx"))  # Planilha de macroentregas (anterior)
+
+        # Novo status projetos
+        projetos_atual['modalidade'] = projetos_atual['modalidade_financiamento'].apply(definir_modalidade)
+        projetos_atual = verificar_status(projetos_atual)
+        projetos_anterior = verificar_status(projetos_anterior)
         
         # data termino real ou aceite da macroentrega
         # Convertendo colunas para datetime
@@ -287,15 +291,6 @@ def dados_macroentregas():
         # Aplicando a lógica
         macroentregas_anterior = nova_data_macroentrega(macroentregas_anterior, 'data_termino_real', 'data_aceitacao')
         macroentregas_atual = nova_data_macroentrega(macroentregas_atual, 'data_termino_real', 'data_aceitacao')
-
-        # Carregar as planilhas
-        projetos_atual = pd.read_excel(os.path.join(PLANILHAS, "portfolio.xlsx"))  # Planilha de projetos (atual)
-        projetos_anterior = pd.read_excel(os.path.join(ANTERIOR, "portfolio.xlsx"))  # Planilha de projetos (anterior)
-
-        # Novo status projetos
-        projetos_atual['modalidade'] = projetos_atual['modalidade_financiamento'].apply(definir_modalidade)
-        projetos_atual = verificar_status(projetos_atual)
-        projetos_anterior = verificar_status(projetos_anterior)
 
         # status da macroentrega
         macroentregas_anterior = verificar_status_macroentrega(macroentregas_anterior, projetos_atual)

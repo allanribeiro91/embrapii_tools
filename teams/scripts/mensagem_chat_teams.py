@@ -13,9 +13,6 @@ PLANILHAS = os.path.abspath(os.path.join(ROOT, 'planilhas'))
 ANTERIOR = os.path.abspath(os.path.join(ROOT, 'anterior'))
 WEBHOOK_URL = os.getenv('WEBHOOK_URL')
 
-novos, proj_concluidos, novos_concluidos, novos2, proj_atrasados, novos_atrasados, total_projetos, total_projetos_anterior, novos_projetos = dados_projetos()
-novas_macro, macro_atrasadas, novas_macro_atrasadas, macro_sem_termo_60, macro_sem_termo_60_novas, total_macroentregas, total_macroentregas_anterior, novas_macroentregas = dados_macroentregas()
-
 def truncate_text(text, max_length=15):
     """
     Função para truncar o texto e adicionar '...' se o texto for maior que o limite
@@ -40,6 +37,9 @@ def mensagem_teams():
     """
     print("🟡 " + inspect.currentframe().f_code.co_name)
     try:
+
+        novos, proj_concluidos, novos_concluidos, novos2, proj_atrasados, novos_atrasados, total_projetos, total_projetos_anterior, novos_projetos = dados_projetos()
+        novas_macro, macro_atrasadas, novas_macro_atrasadas, macro_sem_termo_60, macro_sem_termo_60_novas, total_macroentregas, total_macroentregas_anterior, novas_macroentregas = dados_macroentregas()
 
         #### TABELA GERAL ####
         tabela_geral = {
