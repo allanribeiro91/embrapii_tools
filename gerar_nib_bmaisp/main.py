@@ -11,11 +11,11 @@ ROOT = os.getenv('ROOT')
 
 PASTA_ARQUIVOS = os.path.abspath(os.path.join(ROOT, 'outputs'))
 
-def gerar_planilhas():
+def main():
     puxar_planilhas()
     gerar_planilha_nib()
     gerar_planilha_bmaisp()
     upload_files(PASTA_ARQUIVOS, "DWPII/nib_e_bmaisp")
-    print(f'Planilhas enviadas para o Sharepoint com sucesso.')
 
-gerar_planilhas()
+if __name__ == "__main__":
+    main()

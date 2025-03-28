@@ -20,7 +20,7 @@ PROJETOS = os.path.abspath(os.path.join(ROOT, 'inputs', 'projetos.xlsx'))
 PROSPECCOES = os.path.abspath(os.path.join(ROOT, 'inputs', 'prospeccao_prospeccao.xlsx'))
 CNAE_IBGE = os.path.abspath(os.path.join(ROOT, 'inputs', 'cnae_ibge.xlsx'))
 
-def atualizar_google_sheet():
+def main():
     puxar_planilhas()
     url = "https://docs.google.com/spreadsheets/d/1x7IUvZnXg2MH2k3QE9Kiq-_Db4eA-2xwFGuswbTDYjg/edit?usp=sharing"
     abas = {
@@ -40,7 +40,7 @@ def atualizar_google_sheet():
     for aba, caminho_arquivo in abas.items():
         print(f'Debug: Aba: {aba}, Caminho: {caminho_arquivo}')
         atualizar_gsheet(url, aba, caminho_arquivo)
-    print("Dados atualizados com sucesso!")
+    
 
 if __name__ == "__main__":
-    atualizar_google_sheet()
+    main()

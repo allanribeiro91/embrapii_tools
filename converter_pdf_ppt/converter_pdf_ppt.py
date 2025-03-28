@@ -4,8 +4,10 @@ from pptx.util import Inches, Pt
 from pptx.enum.text import PP_ALIGN
 from pptx.dml.color import RGBColor
 import os
+import inspect
 
 def pdf_to_ppt_image(pdf_file_path, output_ppt_path, dpi=600):
+    print("🟡 " + inspect.currentframe().f_code.co_name)
     # Criar uma pasta temporária para armazenar as imagens convertidas
     temp_folder = "temp_images"
     if not os.path.exists(temp_folder):
@@ -51,6 +53,8 @@ def pdf_to_ppt_image(pdf_file_path, output_ppt_path, dpi=600):
             file_path = os.path.join(temp_folder, file_name)
             os.remove(file_path)
         os.rmdir(temp_folder)
+    
+    print("🟢 " + inspect.currentframe().f_code.co_name)
 
 # Uso da função
 # pdf_file_path = r"C:\Users\allan.ribeiro\Documents\funcoes_python\converter_pdf_ppt\embrapii_visão_geral.pdf"

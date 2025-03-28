@@ -2,6 +2,7 @@ import os
 import sys
 from dotenv import load_dotenv
 from office365_api.download_files import get_file
+import inspect
 
 # carregar .env e tudo mais
 load_dotenv()
@@ -13,6 +14,7 @@ sys.path.append(PATH_OFFICE)
 
 # puxar planilhas do sharepoint
 def puxar_planilhas():
+    print("🟡 " + inspect.currentframe().f_code.co_name)
     inputs = os.path.join(ROOT, "inputs")
     apagar_arquivos_pasta(inputs)
 
@@ -28,8 +30,12 @@ def puxar_planilhas():
     get_file('projetos.xlsx', 'DWPII/srinfo', inputs)
     get_file('prospeccao_prospeccao.xlsx', 'DWPII/srinfo', inputs)
     get_file('cnae_ibge.xlsx', 'DWPII/lookup_tables', inputs)
+<<<<<<< HEAD
     get_file('equipe_ue.xlsx', 'DWPII/srinfo', inputs)
     print('Downloads concluídos.')
+=======
+    print("🟢 " + inspect.currentframe().f_code.co_name)
+>>>>>>> 289012521494f1dd1b69fd66d749d0ec17069b72
 
 def apagar_arquivos_pasta(caminho_pasta):
     try:
@@ -47,7 +53,7 @@ def apagar_arquivos_pasta(caminho_pasta):
             if os.path.isfile(caminho_arquivo):
                 os.remove(caminho_arquivo)
     except Exception as e:
-        print(f"Ocorreu um erro ao apagar os arquivos: {e}")
+        print(f"🔴 Ocorreu um erro ao apagar os arquivos: {e}")
 
 # puxar_planilhas()
 

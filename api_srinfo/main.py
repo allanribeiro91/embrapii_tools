@@ -14,9 +14,10 @@ PASSWORD = os.getenv('senha')
 # URLs da API
 URL_TOKEN = "https://srinfo.embrapii.org.br/token/"
 API_ENDPOINTS = {
-    "Reserva de Recursos": "https://srinfo.embrapii.org.br/partnerships/api/fundsapprovals/",
-    "Empresas Contatos Avaliacao Projetos": "https://srinfo.embrapii.org.br/analytics/api/reports/evaluationreferences/?start_date=2000-01-01&end_date=2030-01-01&format=json", 
-    "Termo Cooperacao": "https://srinfo.embrapii.org.br/accreditation/api/cooperationterm/",
+    "Planos de Ação": "https://srinfo.embrapii.org.br/api/v2/qim/action_plans/?status=VIG",
+    # "Reserva de Recursos": "https://srinfo.embrapii.org.br/partnerships/api/fundsapprovals/",
+    # "Empresas Contatos Avaliacao Projetos": "https://srinfo.embrapii.org.br/analytics/api/reports/evaluationreferences/?start_date=2000-01-01&end_date=2030-01-01&format=json", 
+    # "Termo Cooperacao": "https://srinfo.embrapii.org.br/accreditation/api/cooperationterm/",
     # "Repasse recursos": "https://srinfo.embrapii.org.br/financial/fundstransfer_json/?draw=0&length=25",
 }
 
