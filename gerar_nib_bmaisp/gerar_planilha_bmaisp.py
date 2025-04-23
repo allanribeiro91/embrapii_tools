@@ -56,7 +56,7 @@ def gerar_projetos_bmaisp(recorte):
     #     "brasil_mais_produtivo", "area_aplicacao", "projeto", "trl_inicial", "trl_final", "valor_embrapii", "valor_empresa",
     #     "valor_unidade_embrapii", "titulo", "titulo_publico", "objetivo", "descricao_publica", "data_extracao_dados"]]
     projetos_filtro = projetos_filtro[[
-        "codigo_projeto", "data_contrato", "status", "tecnologia_habilitadora",
+        "codigo_projeto", "data_contrato", "status", "titulo_publico", "descricao_publica", "tecnologia_habilitadora",
         "valor_embrapii", "valor_empresa", "valor_sebrae", "valor_unidade_embrapii", "data_extracao_dados"]]
     
     # retorno da função

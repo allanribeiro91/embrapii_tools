@@ -229,7 +229,33 @@ def add_novas_linhas_tratada():
         for i, row in enumerate(df_novos_registros.itertuples(index=False, name=None), start=last_row):
             for j, value in enumerate(row, start=1):
                 sheet.Cells(i, j).Value = str(value) if isinstance(value, pd.Timestamp) else value
-        
+
+        # Ordenar os dados pela coluna "Data do contrato"
+        used_range = sheet.Range("A1").CurrentRegion
+        used_range.Sort(
+            Key1=sheet.Range("D1"),
+            Order1=2,  # 1 = crescente, 2 = decrescente
+            Header=1,
+            Orientation=1,  # xlTopToBottom
+            MatchCase=False,
+            SortMethod=1  # xlPinYin
+        )
+
+        # Remover o valor 65535 das colunas P (16) e Q (17)
+        ultima_linha = sheet.Cells(sheet.Rows.Count, 1).End(-4162).Row  # mesma lógica usada para encontrar a última linha
+
+        for col in [16, 17]:  # Colunas P e Q
+            for row in range(2, ultima_linha + 1):  # Começa na linha 2 para ignorar o cabeçalho
+                cell = sheet.Cells(row, col)
+                if cell.Value == 65535:
+                    cell.Value = ""   
+
+        # Aplicar filtro automático na coluna O (15) para mostrar apenas registros com "Saúde"
+        sheet.Range("A1").AutoFilter(Field=15, Criteria1="MS")
+
+        # Selecionar a célula W2
+        sheet.Range("W1").Activate()
+
         # Salvar e fechar o arquivo Excel
         workbook.Save()
         workbook.Close()

@@ -22,6 +22,7 @@ def puxar_planilhas():
     get_file('projetos_empresas.xlsx', 'DWPII/srinfo', inputs)
     get_file('informacoes_empresas.xlsx', 'DWPII/srinfo', inputs)
     get_file('info_unidades_embrapii.xlsx', 'DWPII/srinfo', inputs)
+    get_file('pedidos_pi.xlsx', 'DWPII/srinfo', inputs)
     get_file('ue_linhas_atuacao.xlsx', 'DWPII/srinfo', inputs)
     get_file('macroentregas.xlsx', 'DWPII/srinfo', inputs)
     get_file('negociacoes_negociacoes.xlsx', 'DWPII/srinfo', inputs)

@@ -17,6 +17,7 @@ CLASSIFICACAO_PROJETO = os.path.abspath(os.path.join(ROOT, 'inputs', 'classifica
 PROJETOS = os.path.abspath(os.path.join(ROOT, 'inputs', 'projetos.xlsx'))
 PROSPECCOES = os.path.abspath(os.path.join(ROOT, 'inputs', 'prospeccao_prospeccao.xlsx'))
 CNAE_IBGE = os.path.abspath(os.path.join(ROOT, 'inputs', 'cnae_ibge.xlsx'))
+PEDIDOS_PI = os.path.abspath(os.path.join(ROOT, 'inputs', 'pedidos_pi.xlsx'))
 
 def main():
     puxar_planilhas()
@@ -31,7 +32,8 @@ def main():
             'raw_classificacao_projetos': CLASSIFICACAO_PROJETO,
             'raw_projetos': PROJETOS,
             'raw_prospeccao_prospeccao': PROSPECCOES,
-            'raw_cnae_ibge': CNAE_IBGE}
+            'raw_cnae_ibge': CNAE_IBGE,
+            'raw_pedidos_pi': PEDIDOS_PI}
     for aba, caminho_arquivo in abas.items():
         atualizar_gsheet(url, aba, caminho_arquivo)
     
