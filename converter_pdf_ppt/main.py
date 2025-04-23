@@ -56,12 +56,25 @@ def pdf_to_ppt_image(pdf_file_path, output_ppt_path, dpi=600):
     
     print("🟢 " + inspect.currentframe().f_code.co_name)
 
+<<<<<<< HEAD:converter_pdf_ppt/main.py
 def main():
     # Uso da função
     # pdf_file_path = r"C:\Users\allan.ribeiro\Documents\funcoes_python\converter_pdf_ppt\embrapii_visão_geral.pdf"
     pdf_file_path = "Embrapii_analise_2024_v3.pdf"
     output_ppt_path = "Embrapii_analise_2024_v3.pptx"  # Caminho do arquivo PPT de saída
     pdf_to_ppt_image(pdf_file_path, output_ppt_path)
+=======
+# Uso da função
+# pdf_file_path = r"C:\Users\allan.ribeiro\Documents\funcoes_python\converter_pdf_ppt\embrapii_visão_geral.pdf"
+<<<<<<< HEAD
+pdf_file_path = 'Embrapii_2024_Conferência_Anual_de_Unidades_Embrapii.pdf'
+output_ppt_path = "Embrapii_2024_Conferência_Anual_de_Unidades_Embrapii.pptx"
+=======
+pdf_file_path = "arquivo.pdf"
+output_ppt_path = "resultado2.pptx"  # Caminho do arquivo PPT de saída
+>>>>>>> a7e996e769db5bc1f9d111a4a092ef1397398fb1
+pdf_to_ppt_image(pdf_file_path, output_ppt_path)
+>>>>>>> 60cd279af45960751c85209488890e35e6917d59:converter_pdf_ppt/converter_pdf_ppt.py
 
 # Requisitos:
 # - PyMuPDF (pip install PyMuPDF)
